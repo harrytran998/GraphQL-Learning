@@ -80,13 +80,34 @@ const typeDefs = `
         me: User!
         post: Post!
     }
-
+  
     type Mutation {
       createUser(
         name: String!,
         email: String!,
         age: Int
       ): User!
+
+      createPost(
+        title: String!,
+        body: String!,
+        published: Boolean!
+        input: authorPost
+      ): Post!
+
+      createComment(
+        text: String!,
+        input: IndentifyComment
+      ): Comment!
+    }
+
+    input authorPost {
+      author: User!
+    }
+
+    input IndentifyComment {
+      author: User!
+      post: Post!
     }
 
     type User {
@@ -164,7 +185,7 @@ const resolvers = {
     },
   },
   Mutation: {
-    createUser(paren, args) {
+    createUser(_, args) {
       const emailTaken = users.some(user => user.email === args.email)
       if (emailTaken) {
         throw new Error('Email taken')
@@ -178,6 +199,40 @@ const resolvers = {
       }
       users.push(user)
       return user
+    },
+    createPost(_, args) {
+      const userExited = users.some(user => user.id === args.id)
+      if (!userExited) {
+        throw new Error('User not existed !')
+      }
+
+      const post = {
+        id: v4(),
+        title: args.title,
+        body: args.body,
+        published: args.published,
+        author: args.author,
+        comment: args.comment,
+      }
+      posts.push(post)
+      return post
+    },
+    createComment(_, args) {
+      const userExited = users.some(user => user.id === args.id)
+      const postExited = posts.some(post => post.id === args.id)
+
+      if (!userExited && !postExited) {
+        throw new Error('User not existed !')
+      }
+
+      const comment = {
+        text: args.text,
+        author: args.author,
+        post: args.post,
+      }
+
+      comments.push(comment)
+      return comment
     },
   },
   Post: {
