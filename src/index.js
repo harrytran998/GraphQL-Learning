@@ -82,32 +82,28 @@ const typeDefs = `
     }
   
     type Mutation {
-      createUser(
-        name: String!,
-        email: String!,
-        age: Int
-      ): User!
-
-      createPost(
-        title: String!,
-        body: String!,
-        published: Boolean!
-        input: authorPost
-      ): Post!
-
-      createComment(
-        text: String!,
-        input: IndentifyComment
-      ): Comment!
+      createUser( input: createUserInput ): User!
+      createPost( input: createPostInput ): Post!
+      createComment( input: createCommentInput ): Comment!
     }
 
-    input authorPost {
-      author: User!
+    input createUserInput {
+      name: String!
+      email: String!
+      age: Int
     }
 
-    input IndentifyComment {
-      author: User!
-      post: Post!
+    input createPostInput {
+      title: String!
+      body: String!
+      published: Boolean!
+      author: ID!
+    }
+
+    input createCommentInput {
+      text: String!
+      author: ID!
+      post: ID!
     }
 
     type User {
@@ -186,41 +182,41 @@ const resolvers = {
   },
   Mutation: {
     createUser(_, args) {
-      const emailTaken = users.some(user => user.email === args.email)
+      const emailTaken = users.some(user => user.email === args.input.email)
       if (emailTaken) {
         throw new Error('Email taken')
       }
 
       const user = {
         id: v4(),
-        ...args,
+        ...args.input,
       }
       users.push(user)
       return user
     },
     createPost(_, args) {
-      const userExited = users.some(user => user.id === args.id)
+      const userExited = users.some(user => user.id === args.input.id)
       if (!userExited) {
         throw new Error('User not existed !')
       }
 
       const post = {
         id: v4(),
-        ...args,
+        ...args.input,
       }
       posts.push(post)
       return post
     },
     createComment(_, args) {
-      const userExited = users.some(user => user.id === args.id)
-      const postExited = posts.some(post => post.id === args.id)
+      const userExited = users.some(user => user.id === args.input.id)
+      const postExited = posts.some(post => post.id === args.input.id)
 
       if (!userExited && !postExited) {
         throw new Error('User not existed !')
       }
 
       const comment = {
-        ...args,
+        ...args.input,
       }
 
       comments.push(comment)
