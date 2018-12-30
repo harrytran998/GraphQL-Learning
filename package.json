@@ -3,14 +3,17 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --ext js,graphql --exec babel-node src/index.js"
+    "dev": "nodemon --ext js,graphql --exec babel-node src/index.js",
+    "get-schema": "graphql get-schema -p prisma"
   },
   "repository": "https://github.com/jetaimefrc/GraphQL-Learning.git",
   "author": "NhatTq <jetaimefrc@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "eslint": "^5.10.0",
+    "graphql-cli": "^3.0.3",
     "graphql-yoga": "^1.16.7",
+    "prisma-binding": "^2.2.12",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
