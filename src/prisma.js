@@ -114,8 +114,8 @@ const updatePostForUser = async (postID, data) => {
 }
 
 updatePostForUser('cjqhu8evy0007072330i1xmmx', {
-  title: 'Update post nè',
-  body: 'Đậu má sài Gòn',
+  title: 'Update post lần 2 nè',
+  body: 'Đậu má Việt Nam',
   published: false,
 }).then(users => {
   console.log(JSON.stringify(users, undefined, 2))
