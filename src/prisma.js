@@ -108,7 +108,7 @@ const updatePostForUser = async (postID, data) => {
         id: postID,
       },
     },
-    '{ author { id name } }',
+    '{ comments { author { id name } } }',
   )
   return usersOfPost
 }
