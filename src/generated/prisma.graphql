@@ -1,5 +1,5 @@
 # source: http://localhost:4466
-# timestamp: Sun Dec 30 2018 16:24:59 GMT+0700 (Indochina Time)
+# timestamp: Fri Jan 04 2019 18:00:13 GMT+0700 (Indochina Time)
 
 type AggregateComment {
   count: Int!
@@ -275,6 +275,7 @@ type Post implements Node {
   title: String!
   body: String!
   published: Boolean!
+  comments: [String!]!
   author: User!
 }
 
@@ -288,10 +289,15 @@ type PostConnection {
   aggregate: AggregatePost!
 }
 
+input PostCreatecommentsInput {
+  set: [String!]
+}
+
 input PostCreateInput {
   title: String!
   body: String!
   published: Boolean!
+  comments: PostCreatecommentsInput
   author: UserCreateOneWithoutPostsInput!
 }
 
@@ -309,6 +315,7 @@ input PostCreateWithoutAuthorInput {
   title: String!
   body: String!
   published: Boolean!
+  comments: PostCreatecommentsInput
 }
 
 """An edge in a connection."""
@@ -340,6 +347,7 @@ type PostPreviousValues {
   title: String!
   body: String!
   published: Boolean!
+  comments: [String!]!
 }
 
 input PostScalarWhereInput {
@@ -516,10 +524,15 @@ input PostSubscriptionWhereInput {
   node: PostWhereInput
 }
 
+input PostUpdatecommentsInput {
+  set: [String!]
+}
+
 input PostUpdateDataInput {
   title: String
   body: String
   published: Boolean
+  comments: PostUpdatecommentsInput
   author: UserUpdateOneRequiredWithoutPostsInput
 }
 
@@ -527,6 +540,7 @@ input PostUpdateInput {
   title: String
   body: String
   published: Boolean
+  comments: PostUpdatecommentsInput
   author: UserUpdateOneRequiredWithoutPostsInput
 }
 
@@ -534,12 +548,14 @@ input PostUpdateManyDataInput {
   title: String
   body: String
   published: Boolean
+  comments: PostUpdatecommentsInput
 }
 
 input PostUpdateManyMutationInput {
   title: String
   body: String
   published: Boolean
+  comments: PostUpdatecommentsInput
 }
 
 input PostUpdateManyWithoutAuthorInput {
@@ -569,6 +585,7 @@ input PostUpdateWithoutAuthorDataInput {
   title: String
   body: String
   published: Boolean
+  comments: PostUpdatecommentsInput
 }
 
 input PostUpdateWithWhereUniqueWithoutAuthorInput {
