@@ -10,6 +10,7 @@ type Post {
   title: String!
   body: String!
   published: Boolean!
+  comments: [String!]
   author: User!
 }
 
