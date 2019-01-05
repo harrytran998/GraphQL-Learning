@@ -91,32 +91,31 @@ const prisma = new Prisma({
 // })
 
 const updatePostForUser = async (postID, data) => {
+  const existedPost = await prisma.exists.Post({
+    id: postID,
+  })
+  if (!existedPost) {
+    throw new Error('Post not found !')
+  }
+
   const postUpdate = await prisma.mutation.updatePost(
     {
       where: {
         id: postID,
       },
-      data: {
-        ...data,
-      },
+      data,
     },
-    '{ title body author { name } }',
+    '{ author { id name } }',
   )
-  const usersOfPost = await prisma.query.post(
-    {
-      where: {
-        id: postID,
-      },
-    },
-    '{ comments { author { id name } } }',
-  )
-  return usersOfPost
+  return postUpdate.author
 }
 
-updatePostForUser('cjqhu8evy0007072330i1xmmx', {
-  title: 'Update post lần 2 nè',
+updatePostForUser('2', {
+  title: 'Update post lần 3 nè',
   body: 'Đậu má Việt Nam',
   published: false,
-}).then(users => {
-  console.log(JSON.stringify(users, undefined, 2))
 })
+  .then(users => {
+    console.log(JSON.stringify(users, undefined, 2))
+  })
+  .catch(err => console.log(err.message))
