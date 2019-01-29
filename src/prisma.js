@@ -5,6 +5,8 @@ const prisma = new Prisma({
   endpoint: 'http://localhost:4466',
 })
 
+export { prisma as default }
+
 // prisma.query
 //   .users(null, '{ id name email posts { id title } }')
 //   .then(data => console.log(JSON.stringify(data, undefined, 2)))
@@ -90,32 +92,32 @@ const prisma = new Prisma({
 //   console.log(JSON.stringify(user, undefined, 2))
 // })
 
-const updatePostForUser = async (postID, data) => {
-  const existedPost = await prisma.exists.Post({
-    id: postID,
-  })
-  if (!existedPost) {
-    throw new Error('Post not found !')
-  }
+// const updatePostForUser = async (postID, data) => {
+//   const existedPost = await prisma.exists.Post({
+//     id: postID,
+//   })
+//   if (!existedPost) {
+//     throw new Error('Post not found !')
+//   }
 
-  const postUpdate = await prisma.mutation.updatePost(
-    {
-      where: {
-        id: postID,
-      },
-      data,
-    },
-    '{ author { id name } }',
-  )
-  return postUpdate.author
-}
+//   const postUpdate = await prisma.mutation.updatePost(
+//     {
+//       where: {
+//         id: postID,
+//       },
+//       data,
+//     },
+//     '{ author { id name } }',
+//   )
+//   return postUpdate.author
+// }
 
-updatePostForUser('2', {
-  title: 'Update post lần 3 nè',
-  body: 'Đậu má Việt Nam',
-  published: false,
-})
-  .then(users => {
-    console.log(JSON.stringify(users, undefined, 2))
-  })
-  .catch(err => console.log(err.message))
+// updatePostForUser('2', {
+//   title: 'Update post lần 3 nè',
+//   body: 'Đậu má Việt Nam',
+//   published: false,
+// })
+//   .then(users => {
+//     console.log(JSON.stringify(users, undefined, 2))
+//   })
+//   .catch(err => console.log(err.message))
