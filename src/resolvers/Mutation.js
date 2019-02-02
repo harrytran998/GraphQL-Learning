@@ -1,71 +1,41 @@
 import uuidv4 from 'uuid/v4'
 
 const Mutation = {
-  createUser(parent, args, { db }) {
-    const emailTaken = db.users.some(user => user.email === args.data.email)
-
+  async createUser(parent, args, { prisma }) {
+    const emailTaken = await prisma.exists.User({ email: args.data.email })
     if (emailTaken) {
       throw new Error('Email taken')
     }
-
-    const user = {
-      id: uuidv4(),
-      ...args.data,
-    }
-
-    db.users.push(user)
-
-    return user
-  },
-  deleteUser(parent, args, { db }) {
-    const userIndex = db.users.findIndex(user => user.id === args.id)
-
-    if (userIndex === -1) {
-      throw new Error('User not found')
-    }
-
-    const [deletedUsers] = db.users.splice(userIndex, 1)
-
-    db.posts = db.posts.filter(post => {
-      const match = post.author === args.id
-
-      if (match) {
-        db.comments = db.comments.filter(comment => comment.post !== post.id)
-      }
-
-      return !match
+    return await prisma.mutation.createUser({
+      data: args.data,
     })
-    db.comments = db.comments.filter(comment => comment.author !== args.id)
-
-    return deletedUsers
   },
-  updateUser(parent, args, { db }) {
+  async deleteUser(parent, args, { prisma }) {
+    const userID = args.id
+    const userExisted = await prisma.exists.User({
+      id: userID,
+    })
+    if (!userExisted) {
+      throw new Error('User not found !')
+    }
+    return await prisma.mutation.deleteUser({
+      where: {
+        id: userID,
+      },
+    })
+  },
+  async updateUser(parent, args, { prisma }) {
     const { id, data } = args
-    const user = db.users.find(user => user.id === id)
-
-    if (!user) {
-      throw new Error('User not found')
+    const userExisted = await prisma.exists.User({ id })
+    if (!userExisted) {
+      throw new Error('User not found !')
     }
-
-    if (typeof data.email === 'string') {
-      const emailTaken = db.users.some(user => user.email === data.email)
-
-      if (emailTaken) {
-        throw new Error('Email taken')
-      }
-
-      user.email = data.email
-    }
-
-    if (typeof data.name === 'string') {
-      user.name = data.name
-    }
-
-    if (typeof data.age !== 'undefined') {
-      user.age = data.age
-    }
-
-    return user
+    return prisma.mutation.updateUser({
+      where: {
+        id,
+      },
+      data,
+    })
   },
   createPost(parent, args, { db, pubsub }) {
     const userExists = db.users.some(user => user.id === args.data.author)

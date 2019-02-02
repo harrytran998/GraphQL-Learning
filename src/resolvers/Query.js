@@ -1,5 +1,5 @@
 const Query = {
-  users(parent, args, { prisma }, info) {
+  users(parent, args, { prisma }) {
     const opArgs = {}
     if (args.query) {
       opArgs.where = {
@@ -13,9 +13,9 @@ const Query = {
         ],
       }
     }
-    return prisma.query.users(opArgs, info)
+    return prisma.query.users(opArgs)
   },
-  posts(parent, args, { prisma }, info) {
+  posts(parent, args, { prisma }) {
     const opArgs = {}
     if (args.query) {
       opArgs.where = {
@@ -29,25 +29,10 @@ const Query = {
         ],
       }
     }
-    return prisma.query.posts(opArgs, info)
+    return prisma.query.posts(opArgs)
   },
-  comments(parent, args, { prisma }, info) {
-    return prisma.query.comments(null, info)
-  },
-  me() {
-    return {
-      id: '123098',
-      name: 'Mike',
-      email: 'mike@example.com',
-    }
-  },
-  post() {
-    return {
-      id: '092',
-      title: 'GraphQL 101',
-      body: '',
-      published: false,
-    }
+  comments(parent, args, { prisma }) {
+    return prisma.query.comments(null)
   },
 }
 
