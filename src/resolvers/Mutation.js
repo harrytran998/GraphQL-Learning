@@ -42,20 +42,20 @@ const Mutation = {
   /*
   Post
    */
-  async createPost(_, args, { prisma }) {
-    const { title, body, published, userID } = args
+  async createPost(_, args, { prisma }, info) {
+    const { title, body, published, author } = args.data
 
-    const post = {
+    const newPost = {
       title,
       body,
       published,
       author: {
         connect: {
-          id: userID,
+          id: author,
         },
       },
     }
-    return prisma.mutation.createPost({ data: post })
+    return prisma.mutation.createPost({ data: newPost, info })
   },
   async deletePost(_, args, { prisma }) {
     const postExists = await prisma.exists.Post({ id: args.id })
@@ -82,9 +82,9 @@ const Mutation = {
     })
   },
   async createComment(_, args, { prisma }) {
-    const { userID, postID, textCmt } = args
-    const userExisted = await prisma.exists.User({ id: userID })
-    const postExisted = await prisma.exists.Post({ id: postID })
+    const { text, author, post } = args.data
+    const userExisted = await prisma.exists.User({ id: author })
+    const postExisted = await prisma.exists.Post({ id: post })
     if (!userExisted) {
       throw new Error('User not found !')
     }
@@ -92,15 +92,15 @@ const Mutation = {
       throw new Error('Post not found !')
     }
     const newComment = {
-      text: textCmt,
+      text: text,
       author: {
         connect: {
-          id: userID,
+          id: author,
         },
       },
       post: {
         connect: {
-          id: postID,
+          id: post,
         },
       },
     }
