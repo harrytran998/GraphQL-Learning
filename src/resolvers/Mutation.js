@@ -2,7 +2,7 @@ const Mutation = {
   async createUser(_, args, { prisma }) {
     const emailTaken = await prisma.exists.User({ email: args.data.email })
     if (emailTaken) {
-      throw new Error('Email taken')
+      throw new Error('Email Taken !')
     }
     return await prisma.mutation.createUser({
       data: args.data,
@@ -28,6 +28,10 @@ const Mutation = {
     if (!userExisted) {
       throw new Error('User not found !')
     }
+    const emailTaken = await prisma.exists.User({ email: data.email })
+    if (emailTaken) {
+      throw new Error('Email Taken')
+    }
     return prisma.mutation.updateUser({
       where: {
         id,
@@ -38,18 +42,20 @@ const Mutation = {
   /*
   Post
    */
-  async createPost(_, args, { prisma }, info) {
+  async createPost(_, args, { prisma }) {
+    const { title, body, published, userID } = args
+
     const post = {
-      title: args.data.title,
-      body: args.data.body,
-      published: args.data.published,
+      title,
+      body,
+      published,
       author: {
         connect: {
-          id: args.data.author,
+          id: userID,
         },
       },
     }
-    return prisma.mutation.createPost({ data: post }, info)
+    return prisma.mutation.createPost({ data: post })
   },
   async deletePost(_, args, { prisma }) {
     const postExists = await prisma.exists.Post({ id: args.id })
